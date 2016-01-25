@@ -6,61 +6,85 @@
 
 \maketitle{}
 
-In this homework assignment you will replicate current
-research baseline results for text classification. Before 
-starting the assignment be sure that you understand the model 
-describe in the slides, in the text, and that you are familiar 
-with the computational tutorial in HDF5 and Torch. 
+You have seen text classification, now it is time to implement it.  In
+this homework assignment you will replicate current research baseline
+results for several task. Before starting the assignment, be sure that
+you understand all models described in the slides, in the text, and
+that you are familiar with the computational tutorials in HDF5 and
+Torch.
 
 
-You will be given a set of example sentences and labels. For instance: 
+In this repo are several different data sets containing sentences and 
+their classes. Begin by looking through the \texttt{data/} directory 
+to get a sense of the different files.
 
 
-\vspace{0.5cm}
+\begin{verbatim}
+> head data/stsa.fine.train
+4 a stirring , funny and finally transporting re-imagining of 
+beauty and the beast and 1930s horror films
+1 apparently reassembled from the cutting-room floor of any 
+given daytime soap .
+1 they presume their audience wo n't sit still for a sociology 
+lesson , however entertainingly presented , so they trot out 
+the conventional science-fiction elements of bug-eyed monsters 
+and futuristic women in skimpy clothes .
+2 the entire movie is filled with deja vu moments .
+\end{verbatim}
 
-\noindent
-\texttt{stupid , infantile , redundant , sloppy , over-the-top , and amateurish . yep , it's " waking up in reno . " go back to sleep . }
+Here the first number gives the correct output class, and the rest of
+the line gives the input sentence. There is a similar file for the
+validation set. For the test set, we provide only the input.
 
-You results will be evaluated based on the Kaggle competition dataset at \url{}.
+As you complete this assignment, we ask that you submit your results
+on the test data to the Kaggle competition website at \url{} and that
+you compile your experiences in a write-up based on the template at
+\url{https://github.com/cs287/hw_template}.
 
 \section{Preprocessing}
 
-For this assignment we have provided a sample set of preprocessing
-code in \texttt{preprocessing.py}. Please read the code carefully, as
-you will be expected to write this preprocessing in future
-assignments.  The code reads in text examples and writes them out as
-matrices containing the sparse features for each instance and the
-class. Our basic code just outputs unigram features from the data.
+The first step is to convert the text representations of the data into
+features. For this assignment we have provided a sample set of
+preprocessing code in \texttt{preprocessing.py}. Please read the code
+carefully, as you will be expected to write this preprocessing in
+future assignments.  
+
+The preprocessing code reads in text examples and writes them
+out as matrices containing the sparse features for each instance and
+the class. Our basic code just outputs unigram features from the data.
 The file will output a HDF5 bundle containing the following matrices:
-\texttt{train\_input, train\_output, valid\_input, valid\_output, test\_input, nfeatures, nclasses}.
+\texttt{train\_input, train\_output, valid\_input, valid\_output,
+  test\_input, nfeatures, nclasses}.
 
 \textbf{Note} the structure of \texttt{X\_input} and
 \texttt{X\_output}. The input consists of features, where a single
-contains the feature indices $f_1, \ldots, f_k$. However because there
-are differing number of features for each input the row is padded with
-1's to $k_{max}$ (which should be ignored in your code).  For this
+contains the feature indices $f_1, \ldots, f_k$. However to account
+for differing sentence lengths, for the row is padded with 1's to
+$k_{max}$ (these must be ignored in your modeling code).  For this
 assignment, you should never need to explicitly construct the sparse
 vector $\boldx$. The output consists of the correct class index for
 each input. We do not provide the correct output for the test set.
 
-\section{Classifier}
+\section{Classification Setup}
 
-The code for your project will be in \texttt{HW1.lua} and should be
-entirely written in Lua/Torch. For this assignment, you should not use
-any non-debugging libraries besides the standard Torch framework and
-HDF5.
+The main code for your project should be in \texttt{HW1.lua} and
+should be written in Lua/Torch. For this assignment, we ask that you
+construct all the models from scratch. You should not use any
+(non-debugging) libraries besides the standard Torch framework and HDF5.
 
 \subsection{Prediction and Evaluation}
 
-Be sure you are able to read and output the text data 
-and that you understand the format. To confirm this, write a function 
-that takes in the parameters of a linear model, and evaluates it on 
-the validation set (\texttt{valid\_input} and \texttt{valid\_output}).
-Report the results in terms of prediction accuracy. This same code should 
-be used for each of the linear models described in this project. 
+Be sure you are able to read and output the text data and that you
+understand the format. To confirm this, write a function that takes in
+the parameters of a linear model, and evaluates it on the validation
+set (\texttt{valid\_input} and \texttt{valid\_output}).  The function
+should report the results in terms of prediction accuracy. This same
+code should be used for each of the linear models described in this
+project.
 
-Also be sure you are able output your classification results on the test data as 
-a text file. Check that you can upload these to the Kaggle.
+Also be sure you are able output your classification results on the
+test data as a text file. Check that you can upload these to the
+Kaggle.
 
 \subsection{Hyperparameters}
 
@@ -75,7 +99,7 @@ As part of the write-up, you will need to report on the training and
 predictive accuracy of your models. To make this possible, your code
 should report on various metrics of the model both at training and
 test time. We will leave it up to you on which metrics to log, but we
-recommend reporting training speed, training set NLL, training set
+recommend reporting training speed, training set loss, training set
 predictive accuracy, and validation predictive accuracy. It is your
 responsibility to convince us that the model is correctly training.
 
@@ -83,27 +107,26 @@ responsibility to convince us that the model is correctly training.
 
 For this assignment you will implement the three linear models that 
 we discussed in class: naive bayes, multiclass logistic regression, 
-and multiclass linear svm.
+and multiclass hinge loss.
 
 \subsection{Naive Bayes}
 
 We recommend that you implement multinomial naive Bayes first, since
 it is the most efficient and easiest to debug. Follow the description
-given in the class notes and be sure to include the $\alpha$
-hyperparameter.
+given in the class notes. Run and report on experiments for tuning the
+$\alpha$ hyperparameter.
 
 \subsection{Logistic Regression}
 
 Next implement multiclass logistic regression with L2 regularization
-(exposing the $\lambda$ hyperparameter). For efficiency, training
+(exposing the $\lambda$ hyperparameter)\footnote{Note that there are several tutorials for how to implement logistic
+regression in Torch online. Do not use these. We expect the
+implementation to only utilize the core tensor operations in the
+framework.}. For efficiency, training
 should be done using minibatch stochastic gradient descent. The size
 of the minibatch, the learning rate, and the number of epochs of
 training should also be exposed as hyperparameters.
 
-Note that there are several tutorials for how to implement logistic
-regression in Torch online. Do not use these. We expect the
-implementation to only utilize the core tensor operations in the
-framework.
 
 Further notes:
 
@@ -122,7 +145,7 @@ Further notes:
 
 \subsection{Linear SVM}
 
-Finally implement hinge-loss with L2 regularization (exposing the $C$
+Finally implement hinge-loss with L2 regularization (exposing the $\lambda$
 hyperparameter). This code should use the same minibatch stochastic
 gradient descent code as Logistic Regression. The only difference is
 the calculation of the loss and the gradients. 
