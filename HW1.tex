@@ -8,7 +8,7 @@
 
 You have seen text classification, now it is time to implement it.  In
 this homework assignment you will replicate current research baseline
-results for several task. Before starting the assignment, be sure that
+results for several tasks. Before starting the assignment, be sure that
 you understand all models described in the slides, in the text, and
 that you are familiar with the computational tutorials in HDF5 and
 Torch.
@@ -37,8 +37,9 @@ the line gives the input sentence. There is a similar file for the
 validation set. For the test set, we provide only the input.
 
 As you complete this assignment, we ask that you submit your results
-on the test data to the Kaggle competition website at \url{} and that
-you compile your experiences in a write-up based on the template at
+on the test data to the Kaggle competition website at
+\url{https://inclass.kaggle.com/c/cs287-hw1} and that you compile your
+experiences in a write-up based on the template at
 \url{https://github.com/cs287/hw_template}.
 
 \section{Preprocessing}
@@ -46,7 +47,7 @@ you compile your experiences in a write-up based on the template at
 The first step is to convert the text representations of the data into
 features. For this assignment we have provided a sample set of
 preprocessing code in \texttt{preprocessing.py}. Please read the code
-carefully, as you will be expected to write this preprocessing in
+carefully, as you will be expected to write preprocessing for
 future assignments.  
 
 The preprocessing code reads in text examples and writes them
@@ -57,13 +58,14 @@ The file will output a HDF5 bundle containing the following matrices:
   test\_input, nfeatures, nclasses}.
 
 \textbf{Note} the structure of \texttt{X\_input} and
-\texttt{X\_output}. The input consists of features, where a single
+\texttt{X\_output}. The input consists of features, where a single row
 contains the feature indices $f_1, \ldots, f_k$. However to account
-for differing sentence lengths, for the row is padded with 1's to
-$k_{max}$ (these must be ignored in your modeling code).  For this
-assignment, you should never need to explicitly construct the sparse
-vector $\boldx$. The output consists of the correct class index for
-each input. We do not provide the correct output for the test set.
+for differing sentence lengths, the row is padded with a special
+padding feature 1 to length $k_{max}$ (these must be ignored in your modeling
+code).  For this assignment, you should never need to explicitly
+construct the sparse vector $\boldx$. The output consists of the
+correct class index for each input. We do not provide the correct
+output for the test set.
 
 \section{Classification Setup}
 
