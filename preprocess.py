@@ -29,16 +29,18 @@ def get_vocab(file_list, dataset=''):
     """
     max_sent_len = 0
     word_to_idx = {}
+    # Start at 2 (1 is padding)
     idx = 2
     for filename in file_list:
-        with open(filename, "r") as f:
-            for line in f:
-                words = line_to_words(line, dataset)
-                max_sent_len = max(max_sent_len, len(words))
-                for word in words:
-                    if word not in word_to_idx:
-                        word_to_idx[word] = idx
-                        idx += 1
+        if filename:
+            with open(filename, "r") as f:
+                for line in f:
+                    words = line_to_words(line, dataset)
+                    max_sent_len = max(max_sent_len, len(words))
+                    for word in words:
+                        if word not in word_to_idx:
+                            word_to_idx[word] = idx
+                            idx += 1
     return max_sent_len, word_to_idx
 
 
@@ -103,10 +105,10 @@ FILE_PATHS = {"SST1": ("data/stsa.fine.phrases.train",
               "SST2": ("data/stsa.binary.phrases.train",
                        "data/stsa.binary.dev",
                        "data/stsa.binary.test"),
-              "TREC": ("data/TREC.train.all", "data/TREC.test.all",
+              "TREC": ("data/TREC.train.all", None,
                        "data/TREC.test.all"),
-              "SUBJ": ("data/subj.all", "data/subj.all", "data/subj.all"),
-              "MPQA": ("data/mpqa.all", "data/mpqa.all", "data/mpqa.all")}
+              "SUBJ": ("data/subj.all", None, None),
+              "MPQA": ("data/mpqa.all", None, None)}
 args = {}
 
 
@@ -127,9 +129,11 @@ def main(arguments):
     # Dataset name
     train_input, train_output = convert_data(train, word_to_idx, max_sent_len,
                                              dataset)
-    valid_input, valid_output = convert_data(valid, word_to_idx, max_sent_len,
-                                             dataset)
-    test_input, _ = convert_data(test, word_to_idx, max_sent_len,
+    if valid:
+        valid_input, valid_output = convert_data(valid, word_to_idx, max_sent_len,
+                                                 dataset)
+    if test:
+        test_input, _ = convert_data(test, word_to_idx, max_sent_len,
                                  dataset)
 
     V = len(word_to_idx) + 1
@@ -142,9 +146,11 @@ def main(arguments):
         print(valid_output.shape)
         f['train_input'] = train_input
         f['train_output'] = train_output
-        f['valid_input'] = valid_input
-        f['valid_output'] = valid_output
-        f['test_input'] = test_input
+        if valid:
+            f['valid_input'] = valid_input
+            f['valid_output'] = valid_output
+        if test:
+            f['test_input'] = test_input
         f['nfeatures'] = np.array([V], dtype=np.int32)
         f['nclasses'] = np.array([C], dtype=np.int32)
 

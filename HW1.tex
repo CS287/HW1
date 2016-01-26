@@ -6,17 +6,18 @@
 
 \maketitle{}
 
-You have seen text classification, now it is time to implement it.  In
-this homework assignment you will replicate current research baseline
-results for several tasks. Before starting the assignment, be sure that
-you understand all models described in the slides, in the text, and
-that you are familiar with the computational tutorials in HDF5 and
-Torch.
+In class we covered the basics of text classification, now it is time
+to get your hands dirty and implement it.  In this homework assignment
+you will replicate current research baseline results for several text
+classfication tasks. Before starting the assignment, be sure that you
+understand all models described in the slides, in the text, and that
+you are familiar with the computational tutorials in HDF5 and Torch.
 
 
 In this repo are several different data sets containing sentences and 
 their classes. Begin by looking through the \texttt{data/} directory 
-to get a sense of the different files.
+to get a sense of the different files. The main one we will use is 
+called the Stanford Sentiment dataset \citep{socher2013recursive}.
 
 
 \begin{verbatim}
@@ -34,21 +35,25 @@ and futuristic women in skimpy clothes .
 
 Here the first number gives the correct output class, and the rest of
 the line gives the input sentence. There is a similar file for the
-validation set. For the test set, we provide only the input.
+validation set. For the test set, we provide only the input. 
 
 As you complete this assignment, we ask that you submit your results
 on the test data to the Kaggle competition website at
 \url{https://inclass.kaggle.com/c/cs287-hw1} and that you compile your
 experiences in a write-up based on the template at
-\url{https://github.com/cs287/hw_template}.
-
+\url{https://github.com/cs287/hw_template}. There are 
+several other data sets in the repo that you may find useful for the 
+write-up. For the Kaggle competition, you should submit your results 
+for just the test set of the SST1 multiclass dataset.
+ 
 \section{Preprocessing}
 
 The first step is to convert the text representations of the data into
-features. For this assignment we have provided a sample set of
-preprocessing code in \texttt{preprocessing.py}. Please read the code
-carefully, as you will be expected to write preprocessing for
-future assignments.  
+features. For this assignment we have provided sample preprocessing
+code in \texttt{preprocessing.py}. This code provides preprocessing 
+for all the data sets under \texttt{data/}. Please read the code
+carefully, as you will be expected to write preprocessing for future
+assignments.
 
 The preprocessing code reads in text examples and writes them
 out as matrices containing the sparse features for each instance and
@@ -121,10 +126,10 @@ $\alpha$ hyperparameter.
 \subsection{Logistic Regression}
 
 Next implement multiclass logistic regression with L2 regularization
-(exposing the $\lambda$ hyperparameter)\footnote{Note that there are several tutorials for how to implement logistic
+(exposing the $\lambda$ hyperparameter)\footnote{Note that there are several great tutorials for how to implement logistic
 regression in Torch online. Do not use these. We expect the
 implementation to only utilize the core tensor operations in the
-framework.}. For efficiency, training
+framework. We will get to the some of the higher Torch abstractions in the next assignment.}. For efficiency, training
 should be done using minibatch stochastic gradient descent. The size
 of the minibatch, the learning rate, and the number of epochs of
 training should also be exposed as hyperparameters.
@@ -159,10 +164,11 @@ additional experiments on these data sets. We will leave this aspect
 open-ended, but suggestion include:
 
 \begin{itemize}
-\item Including additional features (for instance bigram features \cite{})
-\item Experimenting with further models (for instance \cite{})
-\item Extensive further hyperparameter tuning and experimentation (for instance \cite{})
-\item Running on specific data sets. 
+\item Implement 10-fold cross validation and experiment on other included datasets (see \citet{wang2012baselines} or \citet{DBLP:conf/emnlp/Kim14} for lists and results). Or find your own datasets to run online.
+\item Include additional features (for instance bigram features, suffix features, cluster features).
+\item Experiment with further models (for instance L2 loss SVM \citep{wang2012baselines})
+\item Extensive further hyperparameter tuning and experimentation (for instance Spearmint \citep{snoek2012practical})
+
 \end{itemize}
 
 \section{Report and Submission}
@@ -175,5 +181,7 @@ In addition to submitting your Kaggle results, we also expect you to report on y
 experimental process. This should include data tables, graphs and discussion of any 
 issues that you may run into. 
 
+\bibliographystyle{apalike} 
+\bibliography{HW1}
 
 \end{document}
