@@ -33,7 +33,7 @@ def get_vocab(file_list, dataset=''):
     idx = 2
     for filename in file_list:
         if filename:
-            with open(filename, "r") as f:
+            with open(filename, "r", encoding="latin-1") as f:
                 for line in f:
                     words = line_to_words(line, dataset)
                     max_sent_len = max(max_sent_len, len(words))
@@ -51,7 +51,7 @@ def convert_data(data_name, word_to_idx, max_sent_len, dataset, start_padding=0)
     """
     features = []
     lbl = []
-    with open(data_name, 'r') as f:
+    with open(data_name, 'r', encoding="latin-1") as f:
         for line in f:
             words = line_to_words(line, dataset)
             y = int(line[0]) + 1
