@@ -16,7 +16,6 @@ def line_to_words(line, dataset):
         clean_line = clean_str_sst(line.strip())
     else:
         clean_line = clean_str(line.strip())
-    clean_line = clean_str_sst(line.strip())
     words = clean_line.split(' ')
     words = words[1:]
     return words
