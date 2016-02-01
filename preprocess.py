@@ -12,7 +12,7 @@ import re
 
 def line_to_words(line, dataset):
     # Different preprocessing is used for these datasets.
-    if dataset not in ['SST1', 'SST2']:
+    if dataset in ['SST1', 'SST2']:
         clean_line = clean_str_sst(line.strip())
     else:
         clean_line = clean_str(line.strip())
@@ -124,7 +124,7 @@ def main(arguments):
     train, valid, test = FILE_PATHS[dataset]
 
     # Features are just the words.
-    max_sent_len, word_to_idx = get_vocab([train, valid, test])
+    max_sent_len, word_to_idx = get_vocab([train, valid, test], dataset)
 
     # Dataset name
     train_input, train_output = convert_data(train, word_to_idx, max_sent_len,
